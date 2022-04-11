@@ -1,0 +1,192 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Engineering Calculation Paper
+% LaTeX Template
+% Version 1.0 (20/1/13)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Dmitry Volynkin (dim_voly@yahoo.com.au)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[10pt,a4paper]{article} % Use A4 paper with a 12pt font size - different paper sizes will require manual recalculation of page margins and border positions
+
+\usepackage{marginnote} % Required for margin notes
+\usepackage{wallpaper} % Required to set each page to have a background
+\usepackage{lastpage} % Required to print the total number of pages
+\usepackage[left=1.3cm,right=4.6cm,top=1.8cm,bottom=4.0cm,marginparwidth=3.4cm]{geometry} % Adjust page margins
+\usepackage{amsmath} % Required for equation customization
+\usepackage{amssymb} % Required to include mathematical symbols
+\usepackage{xcolor} % Required to specify colors by name
+\usepackage{listings}
+
+\usepackage{fancyhdr} % Required to customize headers
+\setlength{\headheight}{80pt} % Increase the size of the header to accommodate meta-information
+\pagestyle{fancy}\fancyhf{} % Use the custom header specified below
+\renewcommand{\headrulewidth}{0pt} % Remove the default horizontal rule under the header
+
+\setlength{\parindent}{0cm} % Remove paragraph indentation
+\newcommand{\tab}{\hspace*{2em}} % Defines a new command for some horizontal space
+
+\newcommand\BackgroundStructure{ % Command to specify the background of each page
+\setlength{\unitlength}{1mm} % Set the unit length to millimeters
+
+\definecolor{amaranth}{rgb}{0.9, 0.17, 0.31}
+\definecolor{babyblueeyes}{rgb}{0.63, 0.79, 0.95}
+\definecolor{beige}{rgb}{0.96, 0.96, 0.86}
+\definecolor{bittersweet}{rgb}{1.0, 0.44, 0.37}
+\definecolor{black}{rgb}{0.0, 0.0, 0.0}
+\definecolor{bleudefrance}{rgb}{0.19, 0.55, 0.91}
+\definecolor{bostonuniversityred}{rgb}{0.8, 0.0, 0.0}
+\definecolor{brightube}{rgb}{0.82, 0.62, 0.91}
+\definecolor{darkseagreen}{rgb}{0.56, 0.74, 0.56}
+\definecolor{lavender}{rgb}{0.9, 0.9, 0.98}
+\definecolor{mayablue}{rgb}{0.45, 0.76, 0.98}
+\definecolor{cadmiumgreen}{rgb}{0.0, 0.42, 0.24}
+\definecolor{almond}{rgb}{0.94, 0.87, 0.8}
+\definecolor{antiquewhite}{rgb}{0.98, 0.92, 0.84}
+\definecolor{ashgrey}{rgb}{0.7, 0.75, 0.71}
+\definecolor{babyblueeyes}{rgb}{0.63, 0.79, 0.95}
+\definecolor{beige}{rgb}{0.96, 0.96, 0.86}
+\definecolor{blond}{rgb}{0.98, 0.94, 0.75}
+\definecolor{cream}{rgb}{1.0, 0.99, 0.82}
+\definecolor{eggshell}{rgb}{0.94, 0.92, 0.84}
+
+\setlength\fboxsep{0mm} % Adjusts the distance between the frameboxes and the borderlines
+\setlength\fboxrule{0.5mm} % Increase the thickness of the border line
+\put(10, 10){\fcolorbox{black}{darkseagreen!10}{\framebox(155,247){}}} % Main content box
+\put(165, 10){\fcolorbox{black}{blond!10}{\framebox(37,247){}}} % Margin box
+\put(10, 262){\fcolorbox{black}{amaranth!10}{\framebox(192, 25){}}} % Header box
+\put(170, 263){\includegraphics[height=23mm,keepaspectratio]{csm}} % Logo box - maximum height/width: 
+}
+
+%----------------------------------------------------------------------------------------
+%	HEADER INFORMATION
+%----------------------------------------------------------------------------------------
+
+\fancyhead[L]{
+\begin{tabular}{l l | l l} % The header is a table with 4 columns
+\textbf{CSC447:} & Parallel Programming &  \textbf{Name:} & Samer Saber  \\ % Project name and page count
+\textbf{Lab 2:}  & Data Race &   \textbf{ID:}  & 123456789 and 987654321\\ % Project name and page count
+\textbf{Date:}&   \today &  \textbf{Page:} & \thepage/\pageref{LastPage}  \\ % Project name and page count
+\textbf{Spring 2021} & & & \\ % Version and reviewed date
+\end{tabular}}
+
+
+ 
+
+%&  & \textbf{Date} & 27/11/2012 \\ % Job number and last updated date
+
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+\AddToShipoutPicture{\BackgroundStructure} % Set the background of each page to that specified above in the header information section
+
+%----------------------------------------------------------------------------------------
+%	DOCUMENT CONTENT
+%----------------------------------------------------------------------------------------
+
+\subsection*{Abstract}
+Give a brief summary of the problem, experimental procedure, and what was done.
+
+\section{Introduction}
+
+Introduce the lab and what what was required to do.  You may use overleaf.com to create your reports.  A much nicer way of doing things.
+
+\section{Implementation}
+
+Explain what was done.  Please explain what was done.   Check the grading rubric to ensure that all points were tackled.  This is how you could include your code:
+
+\begin{lstlisting}[language=Python, caption=Python Example]
+import numpy as np
+    
+def incmatrix(genl1,genl2):
+    m = len(genl1)
+    n = len(genl2)
+    M = None #to become the incidence matrix
+    VT = np.zeros((n*m,1), int)  #dummy variable
+    
+    #compute the bitwise xor matrix
+    M1 = bitxormatrix(genl1)
+    M2 = np.triu(bitxormatrix(genl2),1) 
+
+    for i in range(m-1):
+        for j in range(i+1, m):
+            [r,c] = np.where(M2 == M1[i,j])
+            for k in range(len(r)):
+                VT[(i)*n + r[k]] = 1;
+                VT[(i)*n + c[k]] = 1;
+                VT[(j)*n + r[k]] = 1;
+                VT[(j)*n + c[k]] = 1;
+                
+                if M is None:
+                    M = np.copy(VT)
+                else:
+                    M = np.concatenate((M, VT), 1)
+                
+                VT = np.zeros((n*m,1), int)
+    
+    return M
+\end{lstlisting}
+
+\section{Experimental Platform}
+Explain the experimental setup including parameters, hardware used, and compiler
+
+\section{Results}
+Presents the results that were obtained.
+
+\section{Discussion}
+
+As the semester progresses, you would be expected to further analyze your data critically and drawing valid inferences from data, a vital skill for scientists.  include the following whenever possible:
+\begin{enumerate}
+
+	\item Numerical Analysis
+	\item Graphical Analysis using Excel to construct graphs or plots.  Provide critical analysis, explaining if your graphical analysis agree with your calculations.
+\end{enumerate}
+
+
+\subsubsection{Example Table}
+This is a sample table.
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{|l||l|l|l|}
+\hline
+Member & Designation & Category & $\lambda_e$\\
+\hline
+Active Link & 360UB57 & 1 & 25 \\
+Collector Beam & 360UB57 & 2 & 30 \\
+Column & 310UC137 & 2 & 30 \\
+Brace & 250UC73 & 3A & 40 \\
+\hline
+\end{tabular}
+\end{center}
+\caption{This is a caption}
+\end{table}
+
+And this is a sample equation:
+
+\begin{equation*}
+\tag{Eq. 1}
+e \leqslant 1.6M_s/V_v
+\end{equation*}
+
+
+
+\section{Conclusion}
+And so on\dots
+
+%----------------------------------------------------------------------------------------
+
+\end{document}
