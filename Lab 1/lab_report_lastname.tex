@@ -98,94 +98,84 @@
 %----------------------------------------------------------------------------------------
 
 \subsection*{Abstract}
-Give a brief summary of the problem, experimental procedure, and what was done.
 
+Reproducing the serial code by creating random arrays of different sizes and observing the duration.
 \section{Introduction}
 
-Introduce the lab and what what was required to do.  You may use overleaf.com to create your reports.  A much nicer way of doing things.
+Reproducing the serial code by creating random arrays of sizes 1000, 10000, 100000, and 10000000. Then observing
+the value of Pi on each array size, and checking how long it took.
 
 \section{Implementation}
 
-Explain what was done.  Please explain what was done.   Check the grading rubric to ensure that all points were tackled.  This is how you could include your code:
+At each iteration we're generating a random number from 0 to 1.
 
-\begin{lstlisting}[language=Python, caption=Python Example]
-import numpy as np
-    
-def incmatrix(genl1,genl2):
-    m = len(genl1)
-    n = len(genl2)
-    M = None #to become the incidence matrix
-    VT = np.zeros((n*m,1), int)  #dummy variable
-    
-    #compute the bitwise xor matrix
-    M1 = bitxormatrix(genl1)
-    M2 = np.triu(bitxormatrix(genl2),1) 
+\begin{lstlisting}[language=C, caption=C Example]
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <math.h>
 
-    for i in range(m-1):
-        for j in range(i+1, m):
-            [r,c] = np.where(M2 == M1[i,j])
-            for k in range(len(r)):
-                VT[(i)*n + r[k]] = 1;
-                VT[(i)*n + c[k]] = 1;
-                VT[(j)*n + r[k]] = 1;
-                VT[(j)*n + c[k]] = 1;
-                
-                if M is None:
-                    M = np.copy(VT)
-                else:
-                    M = np.concatenate((M, VT), 1)
-                
-                VT = np.zeros((n*m,1), int)
-    
-    return M
+int main()
+{
+	int		i;//number of iterations
+	double  duration;
+	double  pi;
+	clock_t start;
+	clock_t end;
+	int 	counter;
+
+	i 		= 10000000;
+	start	= clock();
+	counter = 0;
+
+	srand(time(NULL));
+	
+	for (int index = 0; index < i; index++)
+    {
+        double a = (rand() % 543) / (double)(542);
+        double b = (rand() % 543) / (double)(542);
+        if (sqrt((a * a) + (b * b)) <= 1)
+        {
+            counter++;
+        }
+    }
+
+	end		= clock();
+	duration= ((double)(end - start) / CLOCKS_PER_SEC) * 1000;
+	pi 		= 4.0 * ((double)counter / i);
+	printf("Serial of pi is %f and it takes %fms\n", pi, duration);
+
+	return 0;
+}
 \end{lstlisting}
 
 \section{Experimental Platform}
-Explain the experimental setup including parameters, hardware used, and compiler
+Windows 10, Sublime text editor and a GCC compiler
 
 \section{Results}
-Presents the results that were obtained.
+\begin{tabular}{ |p{2cm}||p{2cm}|p{2cm}|  }
+ \hline
+ \multicolumn{3}{|c|}{Serial Performance} \\
+ \hline
+ Size& Pi&Time (ms)\\
+ \hline
+ 1000   & 3,112000    &0.0000\\
+ 10000&   3.132800  & 0.0000\\
+ 100000& 3.133080 & 93.0000\\
+ 100000000    &3.137810 & 2656.0000\\
+ \hline
+\end{tabular}
 
 \section{Discussion}
 
-As the semester progresses, you would be expected to further analyze your data critically and drawing valid inferences from data, a vital skill for scientists.  include the following whenever possible:
-\begin{enumerate}
-
-	\item Numerical Analysis
-	\item Graphical Analysis using Excel to construct graphs or plots.  Provide critical analysis, explaining if your graphical analysis agree with your calculations.
-\end{enumerate}
-
-
-\subsubsection{Example Table}
-This is a sample table.
-
-\begin{table}[h]
-\begin{center}
-\begin{tabular}{|l||l|l|l|}
-\hline
-Member & Designation & Category & $\lambda_e$\\
-\hline
-Active Link & 360UB57 & 1 & 25 \\
-Collector Beam & 360UB57 & 2 & 30 \\
-Column & 310UC137 & 2 & 30 \\
-Brace & 250UC73 & 3A & 40 \\
-\hline
-\end{tabular}
-\end{center}
-\caption{This is a caption}
-\end{table}
-
-And this is a sample equation:
-
-\begin{equation*}
-\tag{Eq. 1}
-e \leqslant 1.6M_s/V_v
-\end{equation*}
-
+With the increase of the number of iterations, the value
+of pi becomes more accurate, and the run-time of the program increases. Thus, the more random numbers we generate to increase the accuracy of pi, the more the duration will
+increase (bad performance)
 
 
 \section{Conclusion}
-And so on\dots
+The more random numbers we generate to increase the accuracy of pi, the more the duration will
+increase (bad performance)
 
 %----------------------------------------------------------------------------------------
 
