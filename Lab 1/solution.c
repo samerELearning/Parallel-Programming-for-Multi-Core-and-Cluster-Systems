@@ -12,7 +12,7 @@ int main()
 	clock_t end;
 	int 	counter;
 
-	i 		= 1000;
+	i 		= 10000;
 	start	= clock();
 	counter = 0;
 
