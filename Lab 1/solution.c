@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
 int main()
 {
 	int		i;//number of iterations
@@ -15,7 +16,16 @@ int main()
 	counter = 0;
 
 	srand(time(NULL));
-	//loop
+	
+	for (int index = 0; index < i; index++)
+    {
+        double a = (rand() % 543) / (double)(543 - 1);
+        double b = (rand() % 543) / (double)(543 - 1);
+        if (sqrt((a * a) + (b * b)) <= 1)
+        {
+            counter++;
+        }
+    }
 
 	end		= clock();
 	duration= ((double)(end - start) / CLOCKS_PER_SEC) * 1000;
