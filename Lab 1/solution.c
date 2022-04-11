@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <time.h>
+#include <math.h>
 
 int main()
 {
@@ -19,8 +20,8 @@ int main()
 	
 	for (int index = 0; index < i; index++)
     {
-        double a = (rand() % 543) / (double)(543 - 1);
-        double b = (rand() % 543) / (double)(543 - 1);
+        double a = (rand() % 543) / (double)(542);
+        double b = (rand() % 543) / (double)(542);
         if (sqrt((a * a) + (b * b)) <= 1)
         {
             counter++;
