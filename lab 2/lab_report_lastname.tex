@@ -421,41 +421,38 @@ Windows 10, Sublime text editor and a GCC compiler
 
 no padding:
 
-\begin{figure}[htp]
+\begin{figure}
     \centering
     \includegraphics[width=12cm]{no-padding.png}
     \caption{A screenshot of the terminal for no padding}
-    \label{fig:termianl}
-\end{figure}
+    \label{fig:no padding}
 
 no padding but locks only:
 
-\begin{figure}[htp]
     \centering
     \includegraphics[width=12cm]{no-padding-locks.png}
     \caption{A screenshot of the terminal for no padding but locks only}
-    \label{fig:termianl}
-\end{figure}
+    \label{fig:locks}
 
 With padding and locks:
 
-\begin{figure}[htp]
     \centering
     \includegraphics[width=12cm]{with-padding-lock.png}
     \caption{A screenshot of the terminal for padding and locks only}
-    \label{fig:termianl}
+    \label{fig:paddingLocks}
 \end{figure}
+
+\vspace{10cm}
 
 \section{Discussion}
 
-With the increase of the number of iterations, the value
-of pi becomes more accurate, and the run-time of the program increases. Thus, the more random numbers we generate to increase the accuracy of pi, the more the duration will
-increase (bad performance)
+We notice after running the codes with different array sizes, that the bigger the array the lower the performance.
+Also, locks and padding make the results more correct.
+And, when the number of threads is increases the code runs faster.
 
 
 \section{Conclusion}
-The more random numbers we generate to increase the accuracy of pi, the more the duration will
-increase (bad performance)
+Race conditions are hard to deal with in parallel programming
 
 %----------------------------------------------------------------------------------------
 
