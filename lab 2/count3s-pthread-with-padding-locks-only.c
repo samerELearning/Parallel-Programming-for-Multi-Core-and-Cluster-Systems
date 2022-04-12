@@ -12,6 +12,11 @@ int * array;
 int length;
 int count;
 
+struct padded_int
+{
+    int value;
+    char padding[60];
+} private_count[MaxThreads];
 pthread_mutex_t m = PTHREAD_MUTEX_INITIALIZER;
 
 void count3s()
