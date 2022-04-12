@@ -12,6 +12,8 @@ int * array;
 int length;
 int count;
 
+pthread_mutex_t m = PTHREAD_MUTEX_INITIALIZER;
+
 void count3s()
 {
    int i;
@@ -40,7 +42,9 @@ void* count3s_thread(void* id)
    {
       if(array[i] == 3)
       {
+         pthread_mutex_lock(&m);
          count++;
+         pthread_mutex_unlock(&m);
       }
    }
    return 0;
