@@ -16,9 +16,17 @@ int main()
 	srand(time(NULL));
 	start		= clock();
 
-	//for loop
+	for (int i = 0; i < array_size; i++)
+    {
+        rand_arr[i] = rand() % 10;
+        if (rand_arr[i] == 3)
+        {
+            counter++;
+        }
+    }
 
 	end		= clock();
 	duration= ((double)(end - start) / CLOCKS_PER_SEC) * 1000;
+	printf("There are %d 3s and it takes %fms", counter, duration);
 	return 0;
 }
