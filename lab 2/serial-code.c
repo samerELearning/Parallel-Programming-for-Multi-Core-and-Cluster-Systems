@@ -11,7 +11,7 @@ int main()
 	clock_t		start;
 	clock_t		end;
 
-	array_size	= 1000;
+	array_size	= 10000;
 	counter		= 0;
 	rand_arr	= calloc(array_size, sizeof(int));
 	srand(time(NULL));
