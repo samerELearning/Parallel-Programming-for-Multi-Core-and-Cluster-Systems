@@ -76,7 +76,7 @@
 \fancyhead[L]{
 \begin{tabular}{l l | l l} % The header is a table with 4 columns
 \textbf{CSC447:} & Parallel Programming &  \textbf{Name:} & Samer Saber  \\ % Project name and page count
-\textbf{Lab 2:}  & Data Race &   \textbf{ID:}  & 201401460\\ % Project name and page count
+\textbf{Lab 1:}  & Pi using Pthreads &   \textbf{ID:}  & 201401460\\ % Project name and page count
 \textbf{Date:}&   \today &  \textbf{Page:} & \thepage/\pageref{LastPage}  \\ % Project name and page count
 \textbf{Spring 2022} & & & \\ % Version and reviewed date
 \end{tabular}}
@@ -99,42 +99,39 @@
 
 \subsection*{Abstract}
 
-Reproducing the serial code by creating random arrays of different sizes and observing the duration.
+Making observations on each code and extracting the running time.
 \section{Introduction}
 
-Reproducing the serial code by creating random arrays of sizes 1000, 10000, 100000, and 10000000. Then observing
-the value of Pi on each array size, and checking how long it took.
+Implementing all the codes and observing the results after each run to check the performance.
 
 \section{Implementation}
 
-At each iteration we're generating a random number from 0 to 1.
+1- Reproducing the serial code:
 
 \begin{lstlisting}[language=C, caption=C Example]
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <math.h>
 
 int main()
 {
-	int		i;//number of iterations
-	double  duration;
-	double  pi;
-	clock_t start;
-	clock_t end;
-	int 	counter;
+	int 		array_size;
+	int 		counter;
+	int * 		rand_arr;
+	double		duration;
+	clock_t		start;
+	clock_t		end;
 
-	i 		= 10000000;
-	start	= clock();
-	counter = 0;
-
+	array_size	= 10000000;
+	counter		= 0;
+	rand_arr	= calloc(array_size, sizeof(int));
 	srand(time(NULL));
-	
-	for (int index = 0; index < i; index++)
+	start		= clock();
+
+	for (int i = 0; i < array_size; i++)
     {
-        double a = (rand() % 543) / (double)(542);
-        double b = (rand() % 543) / (double)(542);
-        if (sqrt((a * a) + (b * b)) <= 1)
+        rand_arr[i] = rand() % 10;
+        if (rand_arr[i] == 3)
         {
             counter++;
         }
@@ -142,10 +139,278 @@ int main()
 
 	end		= clock();
 	duration= ((double)(end - start) / CLOCKS_PER_SEC) * 1000;
-	pi 		= 4.0 * ((double)counter / i);
-	printf("Serial of pi is %f and it takes %fms\n", pi, duration);
-
+	printf("There are %d 3s and it takes %fms", counter, duration);
 	return 0;
+}
+\end{lstlisting}
+
+2- Implementing data race:
+
+\begin{lstlisting}[language=C, caption=C Example]
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <pthread.h>
+
+#define MaxThreads 1000
+void* count3s_thread(void* id);
+pthread_t tid[MaxThreads];
+
+int t;         /* number of threads */
+int * array;
+int length;
+int count;
+
+void count3s()
+{
+   int i;
+   count = 0;
+   /* Create t threads */
+   for(i = 0; i < t; i++)
+   {
+      pthread_create(&tid[i], NULL, count3s_thread, (void*)i);
+   }
+
+   /*** wait for the threads to finish ***/
+   for(i = 0; i < t; i++)
+   {
+      pthread_join(tid[i], NULL);
+   }
+}
+
+void* count3s_thread(void* id)
+{
+   int i;
+   /* Compute portion of the array that this thread should work on */
+   int length_per_thread = length / t;
+   int start = (intptr_t)id * length_per_thread;
+
+   for(i = start; i < start+length_per_thread; i++)
+   {
+      if(array[i] == 3)
+      {
+         count++;
+      }
+   }
+   return 0;
+}
+
+
+int main(int argc, char *argv[])
+{
+   int i;
+   length = 1048576;  /*  2^20  */
+   t = 40;  /*** be sure that t divides length!! ***/
+
+   array = calloc(length, sizeof(int));
+
+   /* initialize the array with random integers between 0 and 9 */
+   srand(time(NULL));  /* seed the random number generator with current time */
+   for(i = 0; i < length; i++)
+   {
+      array[i] = rand()%10;
+   }
+
+   clock_t start = clock();
+   count3s();
+   clock_t end = clock();
+   double time_spent = ((double)(end - start) / CLOCKS_PER_SEC) * 1000.0;
+   printf("It takes %fms\n", time_spent);
+
+   printf("Parallel: The number of 3's is %d\n", count);
+
+   count = 0;
+   for (i = 0; i < length; i++)
+      if (array[i] == 3)
+         count++;
+   printf("Serial: The number of 3's is %d\n", count);
+
+   return 0;
+}
+\end{lstlisting}
+
+3- Implementing data race with locks only:
+
+\begin{lstlisting}[language=C, caption=C Example]
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <pthread.h>
+
+#define MaxThreads 1000
+void* count3s_thread(void* id);
+pthread_t tid[MaxThreads];
+
+int t;         /* number of threads */
+int * array;
+int length;
+int count;
+
+pthread_mutex_t m = PTHREAD_MUTEX_INITIALIZER;
+
+void count3s()
+{
+   int i;
+   count = 0;
+   /* Create t threads */
+   for(i = 0; i < t; i++)
+   {
+      pthread_create(&tid[i], NULL, count3s_thread, (void*)i);
+   }
+
+   /*** wait for the threads to finish ***/
+   for(i = 0; i < t; i++)
+   {
+      pthread_join(tid[i], NULL);
+   }
+}
+
+void* count3s_thread(void* id)
+{
+   int i;
+   /* Compute portion of the array that this thread should work on */
+   int length_per_thread = length / t;
+   int start = (intptr_t)id * length_per_thread;
+
+   for(i = start; i < start+length_per_thread; i++)
+   {
+      if(array[i] == 3)
+      {
+         pthread_mutex_lock(&m);
+         count++;
+         pthread_mutex_unlock(&m);
+      }
+   }
+   return 0;
+}
+
+
+int main(int argc, char *argv[])
+{
+   int i;
+   length = 1048576;  /*  2^20  */
+   t = 40;  /*** be sure that t divides length!! ***/
+
+   array = calloc(length, sizeof(int));
+
+   /* initialize the array with random integers between 0 and 9 */
+   srand(time(NULL));  /* seed the random number generator with current time */
+   for(i = 0; i < length; i++)
+   {
+      array[i] = rand()%10;
+   }
+
+   clock_t start = clock();
+   count3s();
+   clock_t end = clock();
+   double time_spent = ((double)(end - start) / CLOCKS_PER_SEC) * 1000.0;
+   printf("It takes %fms\n", time_spent);
+
+   printf("Parallel: The number of 3's is %d\n", count);
+
+   count = 0;
+   for (i = 0; i < length; i++)
+      if (array[i] == 3)
+         count++;
+   printf("Serial: The number of 3's is %d\n", count);
+
+   return 0;
+}
+\end{lstlisting}
+
+4- data race with locks and padding:
+
+\begin{lstlisting}[language=C, caption=C Example]
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <pthread.h>
+
+#define MaxThreads 1000
+void* count3s_thread(void* id);
+pthread_t tid[MaxThreads];
+
+int t;         /* number of threads */
+int * array;
+int length;
+int count;
+
+struct padded_int
+{
+    int value;
+    char padding[60];
+} private_count[MaxThreads];
+pthread_mutex_t m = PTHREAD_MUTEX_INITIALIZER;
+
+void count3s()
+{
+   int i;
+   count = 0;
+   /* Create t threads */
+   for(i = 0; i < t; i++)
+   {
+      pthread_create(&tid[i], NULL, count3s_thread, (void*)i);
+   }
+
+   /*** wait for the threads to finish ***/
+   for(i = 0; i < t; i++)
+   {
+      pthread_join(tid[i], NULL);
+   }
+}
+
+void* count3s_thread(void* id)
+{
+   int i;
+   /* Compute portion of the array that this thread should work on */
+   int length_per_thread = length / t;
+   int start = (int)id * length_per_thread;
+
+   for(i = start; i < start+length_per_thread; i++)
+   {
+      if(array[i] == 3)
+      {
+         private_count[(int)id].value++;
+      }
+   }
+   pthread_mutex_lock(&m);
+   count += private_count[(int)id].value;
+   pthread_mutex_unlock(&m);
+
+   return 0;
+}
+
+
+int main(int argc, char *argv[])
+{
+   int i;
+   length = 1048576;  /*  2^20  */
+   t = 40;  /*** be sure that t divides length!! ***/
+
+   array = calloc(length, sizeof(int));
+
+   /* initialize the array with random integers between 0 and 9 */
+   srand(time(NULL));  /* seed the random number generator with current time */
+   for(i = 0; i < length; i++)
+   {
+      array[i] = rand()%10;
+   }
+
+   clock_t start = clock();
+   count3s();
+   clock_t end = clock();
+   double time_spent = ((double)(end - start) / CLOCKS_PER_SEC) * 1000.0;
+   printf("It takes %fms\n", time_spent);
+
+   printf("Parallel: The number of 3's is %d\n", count);
+
+   count = 0;
+   for (i = 0; i < length; i++)
+      if (array[i] == 3)
+         count++;
+   printf("Serial: The number of 3's is %d\n", count);
+
+   return 0;
 }
 \end{lstlisting}
 
@@ -153,18 +418,33 @@ int main()
 Windows 10, Sublime text editor and a GCC compiler
 
 \section{Results}
-\begin{tabular}{ |p{2cm}||p{2cm}|p{2cm}|  }
- \hline
- \multicolumn{3}{|c|}{Serial Performance} \\
- \hline
- Size& Pi&Time (ms)\\
- \hline
- 1000   & 3,112000    &0.0000\\
- 10000&   3.132800  & 0.0000\\
- 100000& 3.133080 & 93.0000\\
- 100000000    &3.137810 & 2656.0000\\
- \hline
-\end{tabular}
+
+no padding:
+
+\begin{figure}[htp]
+    \centering
+    \includegraphics[width=12cm]{no-padding.png}
+    \caption{A screenshot of the terminal for no padding}
+    \label{fig:termianl}
+\end{figure}
+
+no padding but locks only:
+
+\begin{figure}[htp]
+    \centering
+    \includegraphics[width=12cm]{no-padding-locks.png}
+    \caption{A screenshot of the terminal for no padding but locks only}
+    \label{fig:termianl}
+\end{figure}
+
+With padding and locks:
+
+\begin{figure}[htp]
+    \centering
+    \includegraphics[width=12cm]{with-padding-lock.png}
+    \caption{A screenshot of the terminal for padding and locks only}
+    \label{fig:termianl}
+\end{figure}
 
 \section{Discussion}
 
