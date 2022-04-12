@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
 {
    int i;
    length = 1048576;  /*  2^20  */
-   t = 40;  /*** be sure that t divides length!! ***/
+   t = 1;  /*** be sure that t divides length!! ***/
 
    array = calloc(length, sizeof(int));
 
