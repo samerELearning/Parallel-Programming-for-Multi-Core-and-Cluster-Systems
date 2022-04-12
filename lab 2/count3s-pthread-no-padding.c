@@ -34,19 +34,15 @@ void* count3s_thread(void* id)
    int i;
    /* Compute portion of the array that this thread should work on */
    int length_per_thread = length / t;
-   int start = (int)id * length_per_thread;
+   int start = (intptr_t)id * length_per_thread;
 
    for(i = start; i < start+length_per_thread; i++)
    {
       if(array[i] == 3)
       {
-         private_count[(int)id].value++;
+         count++;
       }
    }
-   pthread_mutex_lock(&m);
-   count += private_count[(int)id].value;
-   pthread_mutex_unlock(&m);
-
    return 0;
 }
 
@@ -66,16 +62,19 @@ int main(int argc, char *argv[])
       array[i] = rand()%10;
    }
 
-   count3s();  /* run the threads, wait till they finish */
+   clock_t start = clock();
+   count3s();
+   clock_t end = clock();
+   double time_spent = ((double)(end - start) / CLOCKS_PER_SEC) * 1000.0;
+   printf("It takes %fms\n", time_spent);
 
-   printf("The number of 3's is %d\n", count);
+   printf("Parallel: The number of 3's is %d\n", count);
 
-   /* As a test, let us count 3's the slow, serial way. */
    count = 0;
-   for(i = 0; i < length; i++)
-      if(array[i] == 3)
+   for (i = 0; i < length; i++)
+      if (array[i] == 3)
          count++;
-   printf("The number of 3's is %d\n", count);
+   printf("Serial: The number of 3's is %d\n", count);
 
    return 0;
 }
