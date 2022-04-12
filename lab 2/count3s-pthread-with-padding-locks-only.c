@@ -41,17 +41,19 @@ void* count3s_thread(void* id)
    int i;
    /* Compute portion of the array that this thread should work on */
    int length_per_thread = length / t;
-   int start = (intptr_t)id * length_per_thread;
+   int start = (int)id * length_per_thread;
 
    for(i = start; i < start+length_per_thread; i++)
    {
       if(array[i] == 3)
       {
-         pthread_mutex_lock(&m);
-         count++;
-         pthread_mutex_unlock(&m);
+         private_count[(int)id].value++;
       }
    }
+   pthread_mutex_lock(&m);
+   count += private_count[(int)id].value;
+   pthread_mutex_unlock(&m);
+   
    return 0;
 }
 
