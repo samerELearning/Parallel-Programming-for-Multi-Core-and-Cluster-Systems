@@ -289,8 +289,11 @@ void *producer (void *parg)
      * If the queue is full, we have no place to put anything we
      * produce, so wait until it is not full.
      */
+    pthread_mutex_lock (fifo->lock);
+
     while (fifo->full && *total_produced != WORK_MAX) {
       printf ("prod %d:  FULL.\n", my_tid);
+      pthread_cond_wait(fifo->notFull, fifo->lock);
     }
 
     /*
