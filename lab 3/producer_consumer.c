@@ -316,10 +316,19 @@ void *producer (void *parg)
      * Announce the production outside the critical section 
      */
     printf("prod %d:  %d.\n", my_tid, item_produced);
-
+    if (*total_produced<WORK_MAX)
+    {
+    pthread_cond_signal (fifo->notEmpty);
+    pthread_mutex_unlock (fifo->lock);
+    }
+    
+    else
+        break;
   }
 
   printf("prod %d:  exited\n", my_tid);
+  pthread_cond_signal(fifo->notEmpty);
+  pthread_mutex_unlock (fifo->lock);
   return (NULL);
 }
 
