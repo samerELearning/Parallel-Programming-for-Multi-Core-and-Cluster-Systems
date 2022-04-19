@@ -90,8 +90,8 @@ void queueDelete (queue *q)
   /*
    * Destroy the mutex and deallocate its memory
    */
-  pthread_mutex_destroy (q->mutex);
-  free (q->mutex);
+  pthread_mutex_destroy (q->lock);
+  free (q->lock);
 	
   /*
    * Destroy and deallocate the condition variables
