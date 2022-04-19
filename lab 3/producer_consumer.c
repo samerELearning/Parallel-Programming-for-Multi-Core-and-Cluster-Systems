@@ -420,14 +420,26 @@ int main (int argc, char *argv[])
    * Check the number of arguments and determine the numebr of
    * producers and consumers
    */
+
+  struct timeval stop, start;
+   
+   gettimeofday(&start,NULL);
+
   if (argc != 3) {
     printf("Usage: producer_consumer number_of_producers number_of_consumers\n");
-    exit(0);
   }
 
-  pros = atoi(argv[1]);
-  cons = atoi(argv[2]);
+  srand(time(0));
 
+  pros = rand()%16;
+  cons = rand()%16;
+
+  if (pros != 0 && cons != 0)
+  {
+  
+  printf ("Number of Producers: %d\n", pros);
+  printf("Number of Consumers: %d\n\n", cons);
+  }
   /*
    * Create the shared queue
    */
