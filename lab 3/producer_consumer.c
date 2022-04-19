@@ -439,7 +439,7 @@ int main (int argc, char *argv[])
   
   printf ("Number of Producers: %d\n", pros);
   printf("Number of Consumers: %d\n\n", cons);
-  }
+  
   /*
    * Create the shared queue
    */
@@ -544,6 +544,11 @@ int main (int argc, char *argv[])
    */
   queueDelete (fifo);
 
+  gettimeofday(&stop, NULL);
+  
+  printf("\nTime: %lu", (stop.tv_sec-start.tv_sec)*1000000 + stop.tv_usec - start.tv_usec);
+  
+  }
   return 0;
 }
 
