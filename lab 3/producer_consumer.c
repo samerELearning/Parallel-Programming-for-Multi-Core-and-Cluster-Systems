@@ -386,10 +386,14 @@ void *consumer (void *carg)
      */
     do_work(CONSUMER_CPU,CONSUMER_CPU);
     printf ("con %d:   %d.\n", my_tid, item_consumed);
+    pthread_cond_signal(fifo->notFull);
+    pthread_mutex_unlock (fifo->lock);
 
   }
 
   printf("con %d:   exited\n", my_tid);
+  pthread_cond_signal(fifo->notEmpty);
+  pthread_mutex_unlock(fifo->lock);
   return (NULL);
 }
 
