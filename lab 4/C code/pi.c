@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
    num_steps   = 1000000000;
    array       = calloc(num_steps, sizeof(int));
    begin       = clock();
-   pi          = calcPI();
+   pi          = calculatePi();
    stop        = clock();
    duration    = ((double)(stop - begin) / CLOCKS_PER_SEC) * 1000.0;
 
@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
    begin    = clock();
    counter  = 0;
 
-   for (int i = 0; i < length; i++)
+   for (int i = 0; i < num_steps; i++)
    {
       double x_coordinate = (rand() % 2413) / 2412.0;
       double y_coordinate = (rand() % 2413) / 2412.0;
