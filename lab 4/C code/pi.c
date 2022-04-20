@@ -2,8 +2,6 @@
 #include <stdio.h>
 #include <omp.h>   //required for the get_wtime() api
 
-int total;
-int length;
 int *array;
 long long num_steps;
 
@@ -35,7 +33,8 @@ int main(int argc, char* argv[])
 double calculatePi()
 {
    int      index;
-   int      index
+   int      total;
+   int      local;
    double   x_coordinate;
    double   y_coordinate;
 
