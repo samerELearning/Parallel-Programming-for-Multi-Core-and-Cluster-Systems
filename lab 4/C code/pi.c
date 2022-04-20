@@ -1,5 +1,8 @@
 // LICENSE : GPL 3, see file LICENSE_GPL-3.txt
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <math.h>
 #include <omp.h>   //required for the get_wtime() api
 
 int *array;
@@ -15,8 +18,8 @@ int main(int argc, char* argv[])
    clock_t  begin;
    clock_t  stop;
 
-   array       = calloc(length, sizeof(int));
    num_steps   = 1000000000;
+   array       = calloc(num_steps, sizeof(int));
    begin       = clock();
    pi          = calcPI();
    stop        = clock();
@@ -38,7 +41,7 @@ int main(int argc, char* argv[])
          counter++;
       }
    }
-   end       = clock();
+   stop      = clock();
    duration  = ((double)(stop - begin) / CLOCKS_PER_SEC) * 1000.0;
    pi        = 4.0 * ((double)counter / num_steps);
 
@@ -64,7 +67,7 @@ double calculatePi()
    #pragma omp parallel firstprivate(local)
    {
       #pragma omp for
-      for (int i = 0; i < length; i++)
+      for (int i = 0; i < num_steps; i++)
       {
          x_coordinate = (rand() % 2413) / 2412.0;
          y_coordinate = (rand() % 2413) / 2412.0;
