@@ -9,23 +9,41 @@ double calculatePi();
 
 int main(int argc, char* argv[])
 {
-   double start, stop;
-   double x, pi, sum=0.0;
-   int i;
-   num_steps = 1000000000;
-   step = 1./(double)num_steps;
-   start = omp_get_wtime();   //uses openmp's timer api
-   for (i=0; i<num_steps; i++)
+   int      counter;
+   double   pi;
+   double   duration;
+   clock_t  begin;
+   clock_t  stop;
+
+   array       = calloc(length, sizeof(int));
+   num_steps   = 1000000000;
+   begin       = clock();
+   pi          = calcPI();
+   stop        = clock();
+   duration    = ((double)(stop - begin) / CLOCKS_PER_SEC) * 1000.0;
+
+   printf("pi = %f and it takes %fms\n", pi, duration);
+
+   begin    = clock();
+   counter  = 0;
+
+   for (int i = 0; i < length; i++)
    {
-      x = (i + .5)*step;
-      sum = sum + 4.0/(1.+ x*x);
+      double x_coordinate = (rand() % 2413) / 2412.0;
+      double y_coordinate = (rand() % 2413) / 2412.0;
+      array[i] = sqrt((x_coordinate * x_coordinate) + (y_coordinate * y_coordinate)) <= 1 ? 1 : 0;
+
+      if (array[i] == 1)
+      {
+         counter++;
+      }
    }
-   
-   pi = sum*step;
-   stop = omp_get_wtime();  //uses openmp's timer api
+   end       = clock();
+   duration  = ((double)(stop - begin) / CLOCKS_PER_SEC) * 1000.0;
+   pi        = 4.0 * ((double)counter / num_steps);
 
    printf("The value of PI is %15.12f\n",pi);
-   printf("The time to calculate PI was %15.3f seconds\n",stop - start);
+   printf("The time to calculate PI was %15.3f seconds\n",duration);
    return 0;
 }
 
@@ -48,8 +66,8 @@ double calculatePi()
       #pragma omp for
       for (int i = 0; i < length; i++)
       {
-         x_coordinate = (rand() % 2412) / 2412.0;
-         y_coordinate = (rand() % 2412) / 2412.0;
+         x_coordinate = (rand() % 2413) / 2412.0;
+         y_coordinate = (rand() % 2413) / 2412.0;
 
          array[i] = sqrt((x_coordinate * x_coordinate) + (y_coordinate * y_coordinate)) <= 1 ? 1 : 0;
 
