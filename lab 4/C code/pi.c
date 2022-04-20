@@ -30,3 +30,15 @@ int main(int argc, char* argv[])
    printf("The time to calculate PI was %15.3f seconds\n",stop - start);
    return 0;
 }
+
+
+double calculatePi()
+{
+   int      index;
+   int      index
+   double   x_coordinate;
+   double   y_coordinate;
+
+   total = 0;
+   local = 0;
+}
