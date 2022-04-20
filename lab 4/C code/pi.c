@@ -32,7 +32,6 @@ int main(int argc, char* argv[])
 
 double calculatePi()
 {
-   int      index;
    int      total;
    int      local;
    double   x_coordinate;
@@ -40,4 +39,29 @@ double calculatePi()
 
    total = 0;
    local = 0;
+
+   omp_set_num_threads(8);
+   srand(time(NULL));
+
+   #pragma omp parallel firstprivate(local)
+   {
+      #pragma omp for
+      for (int i = 0; i < length; i++)
+      {
+         x_coordinate = (rand() % 2412) / 2412.0;
+         y_coordinate = (rand() % 2412) / 2412.0;
+
+         array[i] = sqrt((x_coordinate * x_coordinate) + (y_coordinate * y_coordinate)) <= 1 ? 1 : 0;
+
+         if (array[i] == 1)
+         {
+            local++;
+         }
+      }
+      #pragma omp critical
+      {
+         total += local;
+      }
+   }
+   return ((double)total / num_steps) * 4.0;
 }
